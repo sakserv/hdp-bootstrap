@@ -95,7 +95,7 @@ echo -e "\n####  Installing the EPEL yum repo on $(hostname -f)"
 rpm -Uvh $EPEL_SOURCE_URL
 echo "SUCCESS"
 
-echo -e "\n####  Installing pdsh $(hostname -f)"
+echo -e "\n####  Installing pdsh on $(hostname -f)"
 yum install pdsh -y || exit 1
 echo "SUCCESS"
 
@@ -129,6 +129,8 @@ echo "SUCCESS"
 echo -e "\n####  Disabling SELinux on $ALL_HOSTS"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 sed -i "s|^\([^#]\)|#\1|g" /etc/selinux/config
+echo "SELINUX=disabled" >>/etc/selinux/config
+echo "SELINUXTYPE=targeted" >>/etc/selinux/config
 ENDSSH
 
 
