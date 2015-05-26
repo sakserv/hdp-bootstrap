@@ -10,11 +10,10 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 #
 # Variables
 #
-SSH_PRIVATE_KEY_PATH=/root/.ssh/id_rsa
-SSH_PUBLIC_KEY_PATH=/root/.ssh/id_rsa.pub
-EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
+SSH_PRIVATE_KEY_PATH=/root/.ssh/id_rsa
+EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 AMBARI_REPO_URL="http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo"
 
 
@@ -81,6 +80,9 @@ if [ ! -e "$SSH_PRIVATE_KEY_PATH" ]; then
 fi
 echo -e "SUCCESS"
 
+
+
+
 ################
 # Client node
 ################
@@ -106,7 +108,7 @@ echo "SUCCESS"
 # All nodes
 ################
 
-ALL_HOSTS=$(cat $MASTER_FILE $SLAVE_FILE 2>/dev/null)
+ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null)
 ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr ' ' ',')
 
 
