@@ -114,7 +114,7 @@ fi
 # All nodes
 ################
 
-ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null)
+ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^#)
 ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr ' ' ',')
 
 #
@@ -202,9 +202,8 @@ echo "SUCCESS"
 #
 echo -e "\n#### Configuring the Ambari YUM Repo"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
-yum -y install wget
 cd /etc/yum.repos.d
-wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
+wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
 cat ambari.repo
 ENDSSH
 echo "SUCCESS"
