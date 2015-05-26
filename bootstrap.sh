@@ -80,6 +80,24 @@ if [ ! -e "$SSH_PRIVATE_KEY_PATH" ]; then
 fi
 echo -e "SUCCESS"
 
+################
+# Client node
+################
+
+#
+# Install base packages
+#
+echo -e "\n####  Installing wget on $(hostname -f)"
+yum install wget -y || exit 1
+echo "SUCCESS"
+
+echo -e "\n####  Installing the EPEL yum repo on $(hostname -f)"
+rpm -Uvh $EPEL_SOURCE_URL
+echo "SUCCESS"
+
+echo -e "\n####  Installing pdsh $(hostname -f)"
+yum install pdsh -y || exit 1
+echo "SUCCESS"
 
 
 
