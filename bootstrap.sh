@@ -15,6 +15,7 @@ SSH_PUBLIC_KEY_PATH=/root/.ssh/id_rsa.pub
 EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH"
 PDSH_ARGS="-R ssh"
+AMBARI_REPO_URL="http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo"
 
 
 #
@@ -102,25 +103,11 @@ echo "SUCCESS"
 
 
 ################
-# All node types
+# All nodes
 ################
+
 ALL_HOSTS=$(cat $MASTER_FILE $SLAVE_FILE 2>/dev/null)
-ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr '\n' ',' | sed 's|,$||g')
-
-#
-# Install base packages
-#
-echo -e "\n####  Installing wget on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH "yum install wget -y" || exit 1
-echo "SUCCESS"
-
-echo -e "\n####  Installing the EPEL yum repo on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH "rpm -Uvh $EPEL_SOURCE_URL"
-echo "SUCCESS"
-
-echo -e "\n####  Installing pdsh $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH "yum install pdsh -y" || exit 1
-echo "SUCCESS"
+ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr ' ' ',')
 
 
 #
@@ -128,60 +115,88 @@ echo "SUCCESS"
 #
 echo -e "\n####  Disabling SELinux on $ALL_HOSTS"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
-sed -i "s|^\([^#]\)|#\1|g" /etc/selinux/config
-echo "SELINUX=disabled" >>/etc/selinux/config
+echo "SELINUX=disabled" >/etc/selinux/config
 echo "SELINUXTYPE=targeted" >>/etc/selinux/config
+cat /etc/selinux/config
 ENDSSH
+echo "SUCCESS"
 
 
-exit 0
-
-
-# Disable Transparent Huge Pages (thanks Paul!) 
+#
+# Disable Transparent Huge Pages
+#
 echo -e "\n#### Disabling Transparent Huge Pages"
-scp -o StrictHostKeyChecking=no -i secloud.pem rc.local.append root@$1:
-ssh -o StrictHostKeyChecking=no -i secloud.pem root@$1 <<'ENDSSH'
-cat /root/rc.local.append >> /etc/rc.local
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+echo "if test -f /sys/kernel/mm/transparent_hugepage/enabled; then echo never > /sys/kernel/mm/transparent_hugepage/enabled; fi" >> /etc/rc.local
+echo "if test -f /sys/kernel/mm/transparent_hugepage/defrag; then echo never > /sys/kernel/mm/transparent_hugepage/defrag; fi" >> /etc/rc.local
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
 echo never > /sys/kernel/mm/transparent_hugepage/defrag
+echo "/sys/kernel/mm/transparent_hugepage/enabled: $(cat /sys/kernel/mm/transparent_hugepage/enabled)"
+echo "/sys/kernel/mm/transparent_hugepage/defrag: $(cat /sys/kernel/mm/transparent_hugepage/defrag)"
 ENDSSH
+echo "SUCCESS"
 
+
+#
 # Disable IPv6
+#
 echo -e "\n#### Disabling IPv6"
-ssh -o StrictHostKeyChecking=no -i secloud.pem root@$1 <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 echo "# Added by HDP Bootstrap Script - disable IPv6" >> /etc/sysctl.conf
 echo "net.ipv6.conf.all.disable_ipv6 = 1" >> /etc/sysctl.conf
 echo "net.ipv6.conf.default.disable_ipv6 = 1" >> /etc/sysctl.conf
+tail /etc/sysctl.conf
 ENDSSH
+echo "SUCCESS"
 
-echo -e "\n#### Configuring YUM Repos"
-ssh -o StrictHostKeyChecking=no -i secloud.pem root@$1 <<'ENDSSH'
-yum -y install wget
-cd /etc/yum.repos.d
-wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
-ENDSSH
 
+#
+# Configure NTPD
+#
 echo -e "\n#### Configuring NTP"
-ssh -o StrictHostKeyChecking=no -i secloud.pem root@$1 <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 yum -y install ntp
 ntpdate pool.ntp.org
 chkconfig ntpd on
 /etc/init.d/ntpd stop
 /etc/init.d/ntpd start
+/etc/init.d/ntpd status
 ENDSSH
+echo "SUCCESS"
 
+
+#
+# Disabling IPTables
+#
 echo -e "\n#### Disabling IPTables"
-ssh -o StrictHostKeyChecking=no -i secloud.pem root@$1 <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 chkconfig iptables off
 /etc/init.d/iptables stop
+/etc/init.d/iptables status
 chkconfig ip6tables off
 /etc/init.d/ip6tables stop
+/etc/init.d/ip6tables status
 ENDSSH
+echo "SUCCESS"
+
+
+#
+# Add the Ambari repo
+#
+echo -e "\n#### Configuring the Ambari YUM Repo"
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+yum -y install wget
+cd /etc/yum.repos.d
+wget wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
+cat ambari.repo
+ENDSSH
+echo "SUCCESS"
+
 
 echo -e "\n##"
-echo -e "## Finished bootstrap on $1"
+echo -e "## Finished bootstrap on $ALL_NODES_PDSH"
 echo -e "##"
 
 exit 0
