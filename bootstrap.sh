@@ -132,6 +132,7 @@ echo -e "\n####  Disabling SELinux on $ALL_HOSTS"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 echo "SELINUX=disabled" >/etc/selinux/config
 echo "SELINUXTYPE=targeted" >>/etc/selinux/config
+setenforce 0
 cat /etc/selinux/config
 ENDSSH
 echo "SUCCESS"
