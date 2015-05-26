@@ -90,17 +90,23 @@ echo -e "SUCCESS"
 #
 # Install base packages
 #
-echo -e "\n####  Installing wget on $(hostname -f)"
-yum install wget -y || exit 1
-echo "SUCCESS"
+if ! rpm -q wget >/dev/null 2>&1; then
+  echo -e "\n####  Installing wget on $(hostname -f)"
+  yum install wget -y || exit 1
+  echo "SUCCESS"
+fi
 
-echo -e "\n####  Installing the EPEL yum repo on $(hostname -f)"
-rpm -Uvh $EPEL_SOURCE_URL
-echo "SUCCESS"
+if ! rpm -qa | grep -q epel; then
+  echo -e "\n####  Installing the EPEL yum repo on $(hostname -f)"
+  rpm -Uvh $EPEL_SOURCE_URL
+  echo "SUCCESS"
+fi
 
-echo -e "\n####  Installing pdsh on $(hostname -f)"
-yum install pdsh -y || exit 1
-echo "SUCCESS"
+if ! rpm -q pdsh >/dev/null 2>&1; then
+  echo -e "\n####  Installing pdsh on $(hostname -f)"
+  yum install pdsh -y || exit 1
+  echo "SUCCESS"
+fi
 
 
 
@@ -110,6 +116,13 @@ echo "SUCCESS"
 
 ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null)
 ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr ' ' ',')
+
+#
+# Install wget 
+#
+echo -e "\n####  Installing wget on $ALL_HOSTS"
+pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH "yum install wget -y"
+echo "SUCCESS"
 
 
 #
