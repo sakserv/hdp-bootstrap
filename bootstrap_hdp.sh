@@ -81,6 +81,12 @@ fi
 echo -e "SUCCESS"
 
 
+#
+# Create node lists
+#
+ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g')
+ALL_MASTERS=$(cat $MASTER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
+ALL_WORKERS=$(cat $WORKER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
 
 
 ################
@@ -113,15 +119,11 @@ fi
 ################
 # All nodes
 ################
-
-ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^#)
-ALL_HOSTS_PDSH=$(echo $ALL_HOSTS | tr ' ' ',')
-
 #
 # Install wget 
 #
 echo -e "\n####  Installing wget on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH "yum install wget -y"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "yum install wget -y"
 echo "SUCCESS"
 
 
@@ -129,7 +131,7 @@ echo "SUCCESS"
 # Disable SE Linux
 #
 echo -e "\n####  Disabling SELinux on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 echo "SELINUX=disabled" >/etc/selinux/config
 echo "SELINUXTYPE=targeted" >>/etc/selinux/config
 setenforce 0
@@ -142,7 +144,7 @@ echo "SUCCESS"
 # Disable Transparent Huge Pages
 #
 echo -e "\n#### Disabling Transparent Huge Pages"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 echo "if test -f /sys/kernel/mm/transparent_hugepage/enabled; then echo never > /sys/kernel/mm/transparent_hugepage/enabled; fi" >> /etc/rc.local
 echo "if test -f /sys/kernel/mm/transparent_hugepage/defrag; then echo never > /sys/kernel/mm/transparent_hugepage/defrag; fi" >> /etc/rc.local
 echo never > /sys/kernel/mm/transparent_hugepage/enabled
@@ -157,7 +159,7 @@ echo "SUCCESS"
 # Disable IPv6
 #
 echo -e "\n#### Disabling IPv6"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 echo 1 > /proc/sys/net/ipv6/conf/all/disable_ipv6
 echo 1 > /proc/sys/net/ipv6/conf/default/disable_ipv6
 echo "# Added by HDP Bootstrap Script - disable IPv6" >> /etc/sysctl.conf
@@ -172,7 +174,7 @@ echo "SUCCESS"
 # Configure NTPD
 #
 echo -e "\n#### Configuring NTP"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 yum -y install ntp
 ntpdate pool.ntp.org
 chkconfig ntpd on
@@ -187,7 +189,7 @@ echo "SUCCESS"
 # Disabling IPTables
 #
 echo -e "\n#### Disabling IPTables"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 chkconfig iptables off
 /etc/init.d/iptables stop
 /etc/init.d/iptables status
@@ -202,15 +204,52 @@ echo "SUCCESS"
 # Add the Ambari repo
 #
 echo -e "\n#### Configuring the Ambari YUM Repo"
-pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
+pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
 wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
 cat /etc/yum.repos.d/ambari.repo
 ENDSSH
 echo "SUCCESS"
 
 
+#
+# Distribute the create filesystem script
+#
+echo -e "\n####  Distributing the create filesystem script"
+create_fs_script=$SCRIPT_DIR/create_hdp_filesystems.sh
+dest_dir=/tmp
+pdcp $PDSH_ARGS -w $ALL_HOSTS $create_fs_script $dest_dir
+echo "SUCCESS"
+
+
+
+
+################
+# Master nodes
+################
+#
+# Run the create filesystem script
+#
+echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
+pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t master"
+echo "SUCCESS"
+
+
+
+
+################
+# Worker nodes
+################
+#
+# Run the create filesystem script
+#
+echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
+pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t worker"
+echo "SUCCESS"
+
+
+
 echo -e "\n##"
-echo -e "## Finished bootstrap on $ALL_HOSTS_PDSH"
+echo -e "## Finished bootstrap on $ALL_HOSTS"
 echo -e "##"
 
 exit 0
