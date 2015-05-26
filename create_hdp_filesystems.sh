@@ -35,7 +35,7 @@ done
 SERVER_TYPE=$(echo $SERVER_TYPE | tr [A-Z] [a-z])
 
 #
-# Get the list and count of block devices
+# Get the list of block devices
 #
 drives=$(lsblk | grep ^sd | grep -v sd[ab] | awk '{print $1}')
 
@@ -88,7 +88,7 @@ elif [ "$SERVER_TYPE" = "master" ]; then
   echo -e "${mount_point}\t\t/dev/${drive}\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
 
   # Mount the filesystem
-  echo -e "mount $mount_point" || exit 1
+  mount $mount_point || exit 1
 
 fi
 
