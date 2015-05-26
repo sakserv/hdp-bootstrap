@@ -13,7 +13,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 SSH_PRIVATE_KEY_PATH=/root/.ssh/id_rsa
 SSH_PUBLIC_KEY_PATH=/root/.ssh/id_rsa.pub
 EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
-export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH"
+export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
 AMBARI_REPO_URL="http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo"
 
@@ -196,7 +196,7 @@ echo "SUCCESS"
 
 
 echo -e "\n##"
-echo -e "## Finished bootstrap on $ALL_NODES_PDSH"
+echo -e "## Finished bootstrap on $ALL_HOSTS_PDSH"
 echo -e "##"
 
 exit 0
