@@ -35,9 +35,9 @@ usage() {
 while getopts ":m:w:" opt; do
   case $opt in
     m)
-      MASTER_FILE=$OPTARG;break;;
+      MASTER_FILE=$OPTARG;;
     w)
-      WORKER_FILE=$OPTARG;break;;
+      WORKER_FILE=$OPTARG;;
    \?)
       usage;exit 1;;
   esac
