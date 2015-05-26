@@ -189,7 +189,7 @@ echo -e "\n#### Configuring the Ambari YUM Repo"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
 yum -y install wget
 cd /etc/yum.repos.d
-wget wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
+wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
 cat ambari.repo
 ENDSSH
 echo "SUCCESS"
