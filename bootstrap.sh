@@ -202,9 +202,8 @@ echo "SUCCESS"
 #
 echo -e "\n#### Configuring the Ambari YUM Repo"
 pdsh $PDSH_ARGS -w $ALL_HOSTS_PDSH <<'ENDSSH'
-cd /etc/yum.repos.d
-wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo
-cat ambari.repo
+wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
+cat /etc/yum.repos.d/ambari.repo
 ENDSSH
 echo "SUCCESS"
 
