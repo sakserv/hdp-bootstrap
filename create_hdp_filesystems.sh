@@ -43,7 +43,7 @@ drives=$(lsblk | grep ^sd | grep -v sd[ab] | awk '{print $1}')
 #
 # Worker
 #
-if [ "$type" = "worker" ]; then
+if [ "$SERVER_TYPE" = "worker" ]; then
 
   drive_num=1
   for drive in $drives; do
@@ -72,7 +72,7 @@ if [ "$type" = "worker" ]; then
 #
 # Master
 #
-elif [ "$type" = "master" ]; then
+elif [ "$SERVER_TYPE" = "master" ]; then
 
   # Variables
   drive=$drives
