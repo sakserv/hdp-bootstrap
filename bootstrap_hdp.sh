@@ -128,6 +128,22 @@ echo "SUCCESS"
 
 
 #
+# Install epel repo
+#
+echo -e "\n####  Installing the EPEL yum repo on $ALL_HOSTS"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "rpm -Uvh $EPEL_SOURCE_URL"
+echo "SUCCESS"
+
+
+#
+# Install pdsh (for pdcp)
+#
+echo -e "\n####  Installing pdsh on $ALL_HOSTS"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "yum install pdsh -y"
+echo "SUCCESS"
+
+
+#
 # Disable SE Linux
 #
 echo -e "\n####  Disabling SELinux on $ALL_HOSTS"
