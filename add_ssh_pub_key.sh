@@ -23,9 +23,17 @@ echo "$PUB_KEY_STRING" >>$AUTH_KEYS
 echo "SUCCESS"
 
 #
+# Fix ownership of the .ssh directory
+#
+echo -e "\n####  Fixing ownership of the .ssh directory"
+chown -R root:root $SSH_DIR
+echo "SUCCESS"
+
+#
 # Display contents of authorized_keys
 #
 echo -e "\n####  Displaying the contents of $AUTH_KEYS"
 cat $AUTH_KEYS
+
 
 exit 0
