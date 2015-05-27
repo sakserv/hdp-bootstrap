@@ -66,6 +66,10 @@ if [ "$SERVER_TYPE" = "worker" ]; then
 
     # Mount the filesystem
     mount $mount_point || exit 1
+
+    # Display the mount
+    df -h $mount_point
+
   done
 
 
@@ -89,6 +93,9 @@ elif [ "$SERVER_TYPE" = "master" ]; then
 
   # Mount the filesystem
   mount $mount_point || exit 1
+
+  # Display the mount
+  df -h $mount_point
 
 fi
 
