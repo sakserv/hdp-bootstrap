@@ -62,7 +62,7 @@ if [ "$SERVER_TYPE" = "worker" ]; then
     mkdir -p $mount_point || exit 1
 
     # Create the /etc/fstab entry
-    echo -e "${mount_point}\t\t/dev/${drive}\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
+    echo -e "${mount_point}\t\t/dev/${drive}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
 
     # Mount the filesystem
     mount $mount_point || exit 1
@@ -89,7 +89,7 @@ elif [ "$SERVER_TYPE" = "master" ]; then
   mkdir -p $mount_point || exit 1
 
   # Create the /etc/fstab entry
-  echo -e "${mount_point}\t\t/dev/${drive}\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
+  echo -e "${mount_point}\t\t/dev/${drive}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
 
   # Mount the filesystem
   mount $mount_point || exit 1
