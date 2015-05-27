@@ -16,7 +16,7 @@ MOUNT_ARGS="defaults,data=writeback,noatime,nobarrier"
 # Usage
 #
 usage() {
-  echo "USAGE: $SCRIPT_NAME -t <master/worker>
+  echo "USAGE: $SCRIPT_NAME -t <master/worker>"
   echo -e "\t-t - the type of server, master or worker"
 }
 
