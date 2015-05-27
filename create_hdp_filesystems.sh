@@ -9,7 +9,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 #
 # Variables
 #
-MKFS_ARGS="-t ext4 -m 0"
+MKFS_ARGS="-F -t ext4 -m 0"
 MOUNT_ARGS="defaults,data=writeback,noatime,nobarrier"
 
 #
