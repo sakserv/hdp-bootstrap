@@ -258,8 +258,8 @@ echo "SUCCESS"
 #
 # Run the create filesystem script
 #
-echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
-pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t worker"
+echo -e "\n####  Running the create filesystem script on $ALL_WORKERS"
+pdsh $PDSH_ARGS -w $ALL_WORKERS "bash /tmp/create_hdp_filesystems.sh -t worker"
 echo "SUCCESS"
 
 

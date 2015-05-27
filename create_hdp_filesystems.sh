@@ -39,7 +39,6 @@ SERVER_TYPE=$(echo $SERVER_TYPE | tr [A-Z] [a-z])
 #
 drives=$(lsblk | grep ^sd | grep -v sd[ab] | awk '{print $1}')
 
-
 #
 # Worker
 #
@@ -52,7 +51,7 @@ if [ "$SERVER_TYPE" = "worker" ]; then
     mkfs $MKFS_ARGS /dev/$drive || exit 1
 
     # Zero pad the mount point
-    if [ "$(echo $drive_num | wc -c)" = "1" ]; then
+    if [ "$(echo $drive_num | wc -c)" = "2" ]; then
       mount_point=/data/0$drive_num
     else
       mount_point=/data/$drive_num
