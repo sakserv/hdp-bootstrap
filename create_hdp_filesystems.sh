@@ -69,6 +69,8 @@ if [ "$SERVER_TYPE" = "worker" ]; then
     # Display the mount
     df -h $mount_point
 
+    drive_num=$(( drive_num + 1 ))
+
   done
 
 
