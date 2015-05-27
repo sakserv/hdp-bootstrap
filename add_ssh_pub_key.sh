@@ -30,6 +30,13 @@ chown -R root:root $SSH_DIR
 echo "SUCCESS"
 
 #
+# Disable SELinux temporarily to allow for SSH
+# 
+echo -e "\n####  Disabling SELinux to allow SSH key auth to work"
+setenforce 0
+echo "SUCCESS"
+
+#
 # Display contents of authorized_keys
 #
 echo -e "\n####  Displaying the contents of $AUTH_KEYS"
