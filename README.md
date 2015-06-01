@@ -14,9 +14,15 @@ Usage
 ```
 wget -N https://raw.githubusercontent.com/sakserv/hdp-bootstrap/master/bootstrap_hdp.sh -O /tmp/bootstrap_hdp.sh
 wget -N https://raw.githubusercontent.com/sakserv/hdp-bootstrap/master/create_hdp_filesystems.sh -O /tmp/create_hdp_filesystems.sh
+wget -N https://raw.githubusercontent.com/sakserv/hdp-bootstrap/master/generate_etc_hosts.sh -O /tmp/generate_etc_hosts.sh
 ```
 
-* Create files containing a list of master and worker nodes, one hostname per line
+* Create a file containing a list of all nodes in the cluster, one hostname per line (needed for /etc/hosts generation)
+```
+vi /tmp/allnodes
+```
+
+* Create files containing a list of master and worker nodes you want to bootstrap, one hostname per line
 ```
 vi /tmp/masters
 vi /tmp/workers
