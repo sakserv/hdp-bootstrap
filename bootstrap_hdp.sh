@@ -13,6 +13,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 SSH_PRIVATE_KEY_PATH=/root/.ssh/id_hdp
 export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
+SSH_ARGS="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
 AMBARI_REPO_URL="http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo"
 
@@ -228,6 +229,19 @@ echo "SUCCESS"
 
 
 #
+# Set the hostname
+#
+echo -e "\n#### Setting the hostname to match the public hostname"
+for node in $(echo $ALL_HOSTS | sed 's|,||g'); do
+   echo "Processing $node"
+   ssh $SSH_ARGS $node "hostname $node"
+   ssh $SSH_ARGS $node "sed -i 's|^HOSTNAME=*|HOSTNAME=$node|g' /etc/syconfig/network"
+   echo "Hostname set to: " 
+   ssh $SSH_ARGS $node "hostname"
+done
+
+
+#
 # Distribute the create filesystem script
 #
 echo -e "\n####  Distributing the create filesystem script"
@@ -261,7 +275,6 @@ echo "SUCCESS"
 echo -e "\n####  Running the create filesystem script on $ALL_WORKERS"
 pdsh $PDSH_ARGS -w $ALL_WORKERS "bash /tmp/create_hdp_filesystems.sh -t worker"
 echo "SUCCESS"
-
 
 
 echo -e "\n##"
