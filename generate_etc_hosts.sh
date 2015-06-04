@@ -86,12 +86,14 @@ ALL_HOSTS=$(cat $ALL_FILE $WORKER_FILE 2>/dev/null | grep -v ^# | tr '\n' ',' | 
 #
 # Build up the /etc/hosts file
 #
+echo -e "\n####  Building /etc/hosts for all nodes"
 echo "127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4" >$ETC_HOSTS_TMP
 echo "::1         localhost localhost.localdomain localhost6 localhost6.localdomain6" >>$ETC_HOSTS_TMP
 for node in $(cat $ALL_FILE); do 
   ip=$(ssh $SSH_ARGS $node "/sbin/ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{print $1}'")
   echo -e "$ip\t$node $(echo $node | cut -d. -f1)"
 done
+echo "SUCCESS"
 
 
 #
