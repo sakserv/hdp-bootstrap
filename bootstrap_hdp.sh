@@ -86,8 +86,12 @@ echo -e "SUCCESS"
 # Create node lists
 #
 ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g')
-ALL_MASTERS=$(cat $MASTER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
-ALL_WORKERS=$(cat $WORKER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
+if [ -n "$MASTER_FILE" -a ! -e "$MASTER_FILE" ]; then
+    ALL_MASTERS=$(cat $MASTER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
+fi
+if [ -n "$WORKER_FILE" -a ! -e "$WORKER_FILE" ]; then
+  ALL_WORKERS=$(cat $WORKER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
+fi
 
 
 ################
@@ -241,6 +245,7 @@ for node in $(echo $ALL_HOSTS | sed 's|,||g'); do
 done
 
 
+
 #
 # Distribute the create filesystem script
 #
@@ -259,9 +264,11 @@ echo "SUCCESS"
 #
 # Run the create filesystem script
 #
-echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
-pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t master"
-echo "SUCCESS"
+if [ -n "$MASTER_FILE" -a ! -e "$MASTER_FILE" ]; then
+  echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
+  pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t master"
+  echo "SUCCESS"
+fi
 
 
 
@@ -272,9 +279,11 @@ echo "SUCCESS"
 #
 # Run the create filesystem script
 #
-echo -e "\n####  Running the create filesystem script on $ALL_WORKERS"
-pdsh $PDSH_ARGS -w $ALL_WORKERS "bash /tmp/create_hdp_filesystems.sh -t worker"
-echo "SUCCESS"
+if [ -n "$WORKER_FILE" -a ! -e "$WORKER_FILE" ]; then
+  echo -e "\n####  Running the create filesystem script on $ALL_WORKERS"
+  pdsh $PDSH_ARGS -w $ALL_WORKERS "bash /tmp/create_hdp_filesystems.sh -t worker"
+  echo "SUCCESS"
+fi
 
 
 echo -e "\n##"
