@@ -86,10 +86,10 @@ echo -e "SUCCESS"
 # Create node lists
 #
 ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g')
-if [ -n "$MASTER_FILE" -a ! -e "$MASTER_FILE" ]; then
+if [ -n "$MASTER_FILE" -a -e "$MASTER_FILE" ]; then
     ALL_MASTERS=$(cat $MASTER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
 fi
-if [ -n "$WORKER_FILE" -a ! -e "$WORKER_FILE" ]; then
+if [ -n "$WORKER_FILE" -a -e "$WORKER_FILE" ]; then
   ALL_WORKERS=$(cat $WORKER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
 fi
 
