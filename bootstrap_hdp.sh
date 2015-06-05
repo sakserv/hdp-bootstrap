@@ -115,7 +115,7 @@ fi
 
 if ! rpm -q pdsh >/dev/null 2>&1; then
   echo -e "\n####  Installing pdsh on $(hostname -f)"
-  yum install pdsh -y --disablerepo HDP-UTILS-1.1.0.20 || exit 1
+  yum install pdsh -y || exit 1
   echo "SUCCESS"
 fi
 
@@ -144,7 +144,7 @@ echo "SUCCESS"
 # Install pdsh (for pdcp)
 #
 echo -e "\n####  Installing pdsh on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "yum install pdsh -y --disablerepo HDP-UTILS-1.1.0.20"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "rpm -q pdsh >/dev/null || yum install pdsh -y"
 echo "SUCCESS"
 
 
