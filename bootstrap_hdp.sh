@@ -239,7 +239,7 @@ echo -e "\n#### Setting the hostname to match the public hostname"
 for node in $(echo $ALL_HOSTS | sed 's|,||g'); do
    echo "Processing $node"
    ssh $SSH_ARGS $node "hostname $node"
-   ssh $SSH_ARGS $node "sed -i 's|^HOSTNAME=*|HOSTNAME=$node|g' /etc/sysconfig/network"
+   ssh $SSH_ARGS $node "sed -i 's|^HOSTNAME=.*|HOSTNAME=$node|g' /etc/sysconfig/network"
    echo "Hostname set to: " 
    ssh $SSH_ARGS $node "hostname"
 done
