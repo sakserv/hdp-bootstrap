@@ -13,6 +13,7 @@ Usage
 * Install the ssh public key on all nodes in the cluster.
 ```
 ssh <hostname>
+Switch to the root user: sudo su -
 wget https://raw.githubusercontent.com/sakserv/hdp-bootstrap/master/add_ssh_pub_key.sh && bash add_ssh_pub_key.sh
 ```
 
