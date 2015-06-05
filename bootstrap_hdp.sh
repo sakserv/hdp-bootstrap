@@ -264,7 +264,7 @@ echo "SUCCESS"
 #
 # Run the create filesystem script
 #
-if [ -n "$MASTER_FILE" -a ! -e "$MASTER_FILE" ]; then
+if [ -n "$MASTER_FILE" -a -e "$MASTER_FILE" ]; then
   echo -e "\n####  Running the create filesystem script on $ALL_MASTERS"
   pdsh $PDSH_ARGS -w $ALL_MASTERS "bash /tmp/create_hdp_filesystems.sh -t master"
   echo "SUCCESS"
@@ -279,7 +279,7 @@ fi
 #
 # Run the create filesystem script
 #
-if [ -n "$WORKER_FILE" -a ! -e "$WORKER_FILE" ]; then
+if [ -n "$WORKER_FILE" -a -e "$WORKER_FILE" ]; then
   echo -e "\n####  Running the create filesystem script on $ALL_WORKERS"
   pdsh $PDSH_ARGS -w $ALL_WORKERS "bash /tmp/create_hdp_filesystems.sh -t worker"
   echo "SUCCESS"
