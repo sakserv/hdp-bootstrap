@@ -131,6 +131,13 @@ echo -e "\n####  Installing pdsh on $ALL_HOSTS"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "rpm -q pdsh >/dev/null || yum install pdsh -y"
 echo "SUCCESS"
 
+#
+# Create the user
+#
+echo -e "\n##### Creating user $USER_ID on $ALL_HOSTS"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "adduser $USER_ID"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
+
 
 echo -e "\n##"
 echo -e "## Finished $SCRIPT_NAME on $ALL_HOSTS"
