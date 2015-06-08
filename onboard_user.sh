@@ -139,6 +139,13 @@ pdsh $PDSH_ARGS -w $ALL_HOSTS "adduser $USER_ID"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 
 
+#
+# Create the HDFS user directory
+#
+su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID"
+su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID"
+
+
 echo -e "\n##"
 echo -e "## Finished $SCRIPT_NAME on $ALL_HOSTS"
 echo -e "##"
