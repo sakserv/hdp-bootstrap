@@ -14,6 +14,8 @@ SSH_PRIVATE_KEY_PATH=/root/.ssh/id_hdp
 export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
 SSH_ARGS="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
+QUOTA_GB="100"
+QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 * 3 )))
 
 
 #
@@ -144,6 +146,11 @@ pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 #
 su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID"
 su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID"
+
+#
+# Set the quota on the HDFS user directory
+#
+su - hdfs -c "hdfs dfs -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
 
 
 echo -e "\n##"
