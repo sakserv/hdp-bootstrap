@@ -156,7 +156,7 @@ echo "SUCCESS"
 #
 echo -e "\n##### Setting HDFS usage quota for /user/$USER_ID to ${QUOTA_GB}GB"
 su - hdfs -c "hdfs dfsadmin -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
-su - hdfs -c "hdfs dfs -count /user/$USER_ID" | awk '{print $NF\":\"$3}'"
+su - hdfs -c "hdfs dfs -count -q /user/$USER_ID" | awk '{print $NF,$3}'
 echo "SUCCESS"
 
 
