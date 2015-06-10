@@ -14,8 +14,8 @@ SSH_PRIVATE_KEY_PATH=/root/.ssh/id_hdp
 export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
 SSH_ARGS="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
-QUOTA_GB="100"
-QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 * 3 )))
+QUOTA_GB="300"
+QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 )))
 
 
 #
@@ -139,18 +139,24 @@ echo "SUCCESS"
 echo -e "\n##### Creating user $USER_ID on $ALL_HOSTS"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "adduser $USER_ID"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
+echo "SUCCESS"
 
 
 #
 # Create the HDFS user directory
 #
+echo -e "\n##### Creating the HDFS user directory for $USER_ID"
 su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID"
-su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID"
+su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID"
+su - hdfs -c "hdfs dfs -ls /user | grep $USER_ID"
+echo "SUCCESS"
 
 #
 # Set the quota on the HDFS user directory
 #
+echo -e "\n##### Setting HDFS usage quota for /user/$USER_ID to ${QUOTA_GB}GB"
 su - hdfs -c "hdfs dfs -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
+echo "SUCCESS"
 
 
 echo -e "\n##"
