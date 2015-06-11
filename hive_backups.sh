@@ -11,7 +11,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 # Variables
 #
 DT=$(date +"%Y-%m-%d")
-LOG_DIR=/mnt/resource/hive
+LOG_DIR=/data/backups/hive
 DB_LIST="hive"
 
 

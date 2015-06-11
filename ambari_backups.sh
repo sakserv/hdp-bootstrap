@@ -11,7 +11,7 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 # Variables
 #
 DT=$(date +"%Y-%m-%d")
-LOG_DIR=/mnt/resource/ambari
+LOG_DIR=/data/backups/ambari
 DB_LIST="ambari ambarirca"
 
 
