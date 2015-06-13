@@ -160,6 +160,12 @@ su - hdfs -c "hdfs dfsadmin -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
 su - hdfs -c "hdfs dfs -count -q /user/$USER_ID" | awk '{print $NF,$3}'
 echo "SUCCESS"
 
+#
+# Workaround: Create the user specific hive directory for the hive view
+#
+echo -e "\n##### Creating /user/$USER_ID/hive for the hive view"
+
+
 
 echo -e "\n##"
 echo -e "## Finished $SCRIPT_NAME on $ALL_HOSTS"
