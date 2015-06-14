@@ -164,7 +164,8 @@ echo "SUCCESS"
 # Workaround: Create the user specific hive directory for the hive view
 #
 echo -e "\n##### Creating /user/$USER_ID/hive for the hive view"
-
+su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID/hive"
+echo "SUCCESS"
 
 
 echo -e "\n##"
