@@ -166,6 +166,7 @@ echo "SUCCESS"
 echo -e "\n##### Creating /user/$USER_ID/hive for the hive view"
 su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID/hive"
 su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID/hive"
+su - hdfs -c "hdfs dfs -chmod 777 /user/$USER_ID/hive"
 echo "SUCCESS"
 
 
