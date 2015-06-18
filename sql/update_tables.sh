@@ -84,17 +84,17 @@ echo "SUCCESS"
 
 # Create the staging table
 echo -e "\n####  Creating the staging table, if necessary"
-su - $USER_ID -c "beeline $BEELINE_ARGS -f $SCRIPT_DIR/sql/staging_table.sql"
+su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/staging_table.sql"
 echo "SUCCESS"
 
 # Create the raw table
 echo -e "\n####  Creating the raw table, if necessary"
-su - $USER_ID -c "beeline $BEELINE_ARGS -f $SCRIPT_DIR/sql/raw_table.sql"
+su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/raw_table.sql"
 echo "SUCCESS"
 
 # Create the orc table
 echo -e "\n####  Creating the orc table, if necessary"
-su - $USER_ID -c "beeline $BEELINE_ARGS -f $SCRIPT_DIR/sql/orc_table.sql"
+su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/orc_table.sql"
 echo "SUCCESS"
 
 
