@@ -37,29 +37,29 @@ echo "SUCCESS"
 # Create the necessary directories
 #
 
-#echo -e "\n####  Checking for staging dir $STAGING_DIR"
-#if ! su - hdfs -c "hdfs dfs -test -d $STAGING_DIR"; then
-#  echo "Creating $STAGING_DIR"
-#  su - hdfs -c "hdfs dfs -mkdir -p $STAGING_DIR"
-#  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $STAGING_DIR"
-#fi
-#echo "SUCCESS"
+echo -e "\n####  Checking for staging dir $STAGING_DIR"
+if ! su - hdfs -c "hdfs dfs -test -d $STAGING_DIR"; then
+  echo "Creating $STAGING_DIR"
+  su - hdfs -c "hdfs dfs -mkdir -p $STAGING_DIR"
+  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $STAGING_DIR"
+fi
+echo "SUCCESS"
 
-#echo -e "\n####  Checking for raw table dir $RAW_DIR"
-#if ! su - hdfs -c "hdfs dfs -test -d $RAW_DIR"; then
-#  echo "Creating $RAW_DIR"
-#  su - hdfs -c "hdfs dfs -mkdir -p $RAW_DIR"
-#  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $RAW_DIR"
-#fi
-#echo "SUCCESS"
+echo -e "\n####  Checking for raw table dir $RAW_DIR"
+if ! su - hdfs -c "hdfs dfs -test -d $RAW_DIR"; then
+  echo "Creating $RAW_DIR"
+  su - hdfs -c "hdfs dfs -mkdir -p $RAW_DIR"
+  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $RAW_DIR"
+fi
+echo "SUCCESS"
 
-#echo -e "\n####  Checking for orc table dir $ORC_DIR"
-#if ! su - hdfs -c "hdfs dfs -test -d $ORC_DIR"; then
-#  echo "Creating $ORC_DIR"
-#  su - hdfs -c "hdfs dfs -mkdir -p $ORC_DIR"
-#  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $ORC_DIR"
-#fi
-#echo "SUCCESS"
+echo -e "\n####  Checking for orc table dir $ORC_DIR"
+if ! su - hdfs -c "hdfs dfs -test -d $ORC_DIR"; then
+  echo "Creating $ORC_DIR"
+  su - hdfs -c "hdfs dfs -mkdir -p $ORC_DIR"
+  su - hdfs -c "hdfs dfs -chown $USER_ID:hadoop $ORC_DIR"
+fi
+echo "SUCCESS"
 
 #
 # Check that staging isn't empty
@@ -82,19 +82,19 @@ echo "SUCCESS"
 #
 
 # Create the staging table
-#echo -e "\n####  Creating the staging table, if necessary"
-#hive -f $SCRIPT_DIR/sql/staging_table.sql
-#echo "SUCCESS"
+echo -e "\n####  Creating the staging table, if necessary"
+hive -f $SCRIPT_DIR/sql/staging_table.sql
+echo "SUCCESS"
 
 # Create the raw table
-#echo -e "\n####  Creating the raw table, if necessary"
-#hive -f $SCRIPT_DIR/sql/raw_table.sql
-#echo "SUCCESS"
+echo -e "\n####  Creating the raw table, if necessary"
+hive -f $SCRIPT_DIR/sql/raw_table.sql
+echo "SUCCESS"
 
 # Create the orc table
-#echo -e "\n####  Creating the orc table, if necessary"
-#hive -f $SCRIPT_DIR/sql/orc_table.sql
-#echo "SUCCESS"
+echo -e "\n####  Creating the orc table, if necessary"
+hive -f $SCRIPT_DIR/sql/orc_table.sql
+echo "SUCCESS"
 
 
 #
