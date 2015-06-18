@@ -14,7 +14,6 @@ STAGING_DIR=/data/ACS/HCH/uidata/uidata_staging
 RAW_DIR=/data/ACS/HCH/uidata/uidata_raw
 ORC_DIR=/data/ACS/HCH/uidata/uidata_orc
 USER_ID=hdpadmin
-BEELINE_ARGS="-u jdbc:hive2://localhost:10000/honeywell_acs_hch_poc -d org.apache.hive.jdbc.HiveDriver -n $USER_ID"
 
 #
 # Usage
@@ -84,17 +83,17 @@ echo "SUCCESS"
 
 # Create the staging table
 echo -e "\n####  Creating the staging table, if necessary"
-su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/staging_table.sql"
+su - $USER_ID -c "hive -S -f $SCRIPT_DIR/sql/staging_table.sql"
 echo "SUCCESS"
 
 # Create the raw table
 echo -e "\n####  Creating the raw table, if necessary"
-su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/raw_table.sql"
+su - $USER_ID -c "hive -S -f $SCRIPT_DIR/sql/raw_table.sql"
 echo "SUCCESS"
 
 # Create the orc table
 echo -e "\n####  Creating the orc table, if necessary"
-su - $USER_ID -c "hive -f $SCRIPT_DIR/sql/orc_table.sql"
+su - $USER_ID -c "hive -S -f $SCRIPT_DIR/sql/orc_table.sql"
 echo "SUCCESS"
 
 
@@ -118,8 +117,6 @@ for file in $(su - hdfs -c "hdfs dfs -ls -R $STAGING_DIR" | grep -v -e ^d -e Fou
 
 done
 echo "SUCCESS"
-
-exit 0
 
 #
 # Load the staging data into the ORC table
