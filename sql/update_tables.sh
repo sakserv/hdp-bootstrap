@@ -124,7 +124,7 @@ echo "SUCCESS"
 
 # Load the table
 echo -e "\n####  Adding the staged files to the orc table"
-hive -f $SCRIPT_DIR/sql/insert_into_orc.sql || exit 1
+su - $USER_ID -c "hive -S -f $SCRIPT_DIR/sql/insert_into_orc.sql" || exit 1
 echo "SUCCESS"
 
 
