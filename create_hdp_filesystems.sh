@@ -47,6 +47,9 @@ if [ "$SERVER_TYPE" = "worker" ]; then
   drive_num=1
   for drive in $drives; do
 
+    # Get the UUID for the device
+    dev_uuid=$(blkid -s UUID -o value /dev/$drive)
+
     # Make the filesystem
     mkfs $MKFS_ARGS /dev/$drive || exit 1
 
@@ -61,7 +64,7 @@ if [ "$SERVER_TYPE" = "worker" ]; then
     mkdir -p $mount_point || exit 1
 
     # Create the /etc/fstab entry
-    echo -e "/dev/${drive}\t${mount_point}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
+    echo -e "UUID=${dev_uuid}\t${mount_point}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
 
     # Mount the filesystem
     mount $mount_point || exit 1
