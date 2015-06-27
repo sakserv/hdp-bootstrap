@@ -31,6 +31,12 @@ while getopts ":t:" opt; do
       usage;exit 1;;
   esac
 done
+
+if [ -z "$SERVER_TYPE" ]; then
+  usage
+  exit 1
+fi
+
 # make lower case
 SERVER_TYPE=$(echo $SERVER_TYPE | tr [A-Z] [a-z])
 
