@@ -86,6 +86,9 @@ elif [ "$SERVER_TYPE" = "master" ]; then
   drive=$drives
   mount_point=/data
 
+  # Get the UUID for the device
+  dev_uuid=$(blkid -s UUID -o value /dev/$drive)
+
   # Make the filesystem
   mkfs $MKFS_ARGS /dev/$drive || exit 1
 
@@ -93,7 +96,7 @@ elif [ "$SERVER_TYPE" = "master" ]; then
   mkdir -p $mount_point || exit 1
 
   # Create the /etc/fstab entry
-  echo -e "/dev/${drive}\t${mount_point}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
+  echo -e "UUID=${dev_uuid}\t${mount_point}\text4\t${MOUNT_ARGS}\t0 0" >> /etc/fstab
 
   # Mount the filesystem
   mount $mount_point || exit 1
