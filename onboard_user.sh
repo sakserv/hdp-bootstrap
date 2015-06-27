@@ -25,7 +25,7 @@ QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 )))
 usage() {
   echo "USAGE: $SCRIPT_NAME -u <user id> -a /tmp/allnodes -i <uid> -g <gid> [-s]"
   echo -e "\t-u - the user id to create"
-  echo -e "\t-a - file containing a list of all nodes, one per line"
+  echo -e "\t-a - file containing a list of nodes where the user and group will be created, one per line"
   echo -e "\t-i - UID of the user, this must match across all cluster members"
   echo -e "\t-g - GID of the user, this must match across all cluster members"
   echo -e "\t-s - skip adding user to HDFS - optional"
