@@ -45,7 +45,7 @@ while getopts ":u:a:i:g:s" opt; do
     s)
       SKIP_HDFS="true";;
     i)
-      UID=$OPTARG;;
+      USER_UID=$OPTARG;;
     g)
       GID=$OPTARG;;
    \?)
@@ -67,7 +67,7 @@ if [ ! -e "$ALL_FILE" ]; then
 fi
 
 # Validate that the UID is set
-if [ -z "$UID" ]; then
+if [ -z "$USER_UID" ]; then
   usage
   exit 1
 fi
@@ -113,7 +113,7 @@ pdsh $PDSH_ARGS -w $ALL_HOSTS "groupadd -g $GID $USER_ID"
 echo "SUCCESS"
 
 echo -e "\n##### Creating user $USER_ID on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "useradd -d /home/$USER_ID -g $USER_ID -m -u $UID -s /bin/bash"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "useradd -d /home/$USER_ID -g $USER_ID -m -u $USER_UID -s /bin/bash"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 echo "SUCCESS"
 
