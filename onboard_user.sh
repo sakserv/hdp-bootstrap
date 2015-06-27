@@ -23,10 +23,12 @@ QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 )))
 # Usage
 #
 usage() {
-  echo "USAGE: $SCRIPT_NAME -u <user id> -a /tmp/allnodes [-s]"
+  echo "USAGE: $SCRIPT_NAME -u <user id> -a /tmp/allnodes -i <uid> -g <gid> [-s]"
   echo -e "\t-u - the user id to create"
   echo -e "\t-a - file containing a list of all nodes, one per line"
-  echo -e "\t-s - skip adding user to HDFS"
+  echo -e "\t-i - UID of the user, this must match across all cluster members"
+  echo -e "\t-g - GID of the user, this must match across all cluster members"
+  echo -e "\t-s - skip adding user to HDFS - optional"
 }
 
 
@@ -34,7 +36,7 @@ usage() {
 #
 # Parse command line
 #
-while getopts ":u:a:s" opt; do
+while getopts ":u:a:i:g:s" opt; do
   case $opt in
     u)
       USER_ID=$OPTARG;;
@@ -42,6 +44,10 @@ while getopts ":u:a:s" opt; do
       ALL_FILE=$OPTARG;;
     s)
       SKIP_HDFS="true";;
+    i)
+      UID=$OPTARG;;
+    g)
+      GID=$OPTARG;;
    \?)
       usage;exit 1;;
   esac
@@ -56,6 +62,18 @@ fi
 # Validate that the file containing all nodes exists
 if [ ! -e "$ALL_FILE" ]; then
   echo "ERROR: Could not find the file containing all nodes at $ALL_FILE"
+  usage
+  exit 1
+fi
+
+# Validate that the UID is set
+if [ -z "$UID" ]; then
+  usage
+  exit 1
+fi
+
+# Validate that the GID is set
+if [ -z "$GID" ]; then
   usage
   exit 1
 fi
@@ -90,8 +108,12 @@ ALL_HOSTS=$(cat $ALL_FILE  2>/dev/null | grep -v -e ^# -e ^$ | tr '\n' ',' | sed
 #
 # Create the user
 #
+echo -e "\n##### Creating group $USER_ID with GID $GID on $ALL_HOSTS"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "groupadd -g $GID $USER_ID"
+echo "SUCCESS"
+
 echo -e "\n##### Creating user $USER_ID on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "adduser $USER_ID"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "useradd -d /home/$USER_ID -g $USER_ID -m -u $UID -s /bin/bash"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 echo "SUCCESS"
 
