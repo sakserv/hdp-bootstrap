@@ -113,7 +113,7 @@ pdsh $PDSH_ARGS -w $ALL_HOSTS "groupadd -g $GID $USER_ID"
 echo "SUCCESS"
 
 echo -e "\n##### Creating user $USER_ID on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "useradd -d /home/$USER_ID -g $USER_ID -m -u $USER_UID -s /bin/bash"
+pdsh $PDSH_ARGS -w $ALL_HOSTS "useradd -d /home/$USER_ID -g $USER_ID -m -u $USER_UID -s /bin/bash $USER_ID"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 echo "SUCCESS"
 
