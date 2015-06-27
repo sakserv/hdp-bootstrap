@@ -85,7 +85,7 @@ echo -e "SUCCESS"
 #
 # Create node lists
 #
-ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g')
+ALL_HOSTS=$(cat $MASTER_FILE $WORKER_FILE 2>/dev/null | grep -v -e ^# -e ^$ | tr '\n' ',' | sed 's|,$||g')
 if [ -n "$MASTER_FILE" -a -e "$MASTER_FILE" ]; then
     ALL_MASTERS=$(cat $MASTER_FILE 2>/dev/null | grep -v ^#  | tr '\n' ',' | sed 's|,$||g')
 fi

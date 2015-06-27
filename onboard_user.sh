@@ -81,7 +81,7 @@ echo -e "SUCCESS"
 #
 # Create node lists
 #
-ALL_HOSTS=$(cat $ALL_FILE  2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g')
+ALL_HOSTS=$(cat $ALL_FILE  2>/dev/null | grep -v -e ^# -e ^$ | tr '\n' ',' | sed 's|,$||g')
 
 
 ################
