@@ -23,9 +23,10 @@ QUOTA_BYTES=$(echo $(( QUOTA_GB * 1024 * 1024 * 1024 )))
 # Usage
 #
 usage() {
-  echo "USAGE: $SCRIPT_NAME -u <user id> -a /tmp/allnodes"
+  echo "USAGE: $SCRIPT_NAME -u <user id> -a /tmp/allnodes [-s]"
   echo -e "\t-u - the user id to create"
   echo -e "\t-a - file containing a list of all nodes, one per line"
+  echo -e "\t-s - skip adding user to HDFS"
 }
 
 
@@ -33,12 +34,14 @@ usage() {
 #
 # Parse command line
 #
-while getopts ":u:a:" opt; do
+while getopts ":u:a:s" opt; do
   case $opt in
     u)
       USER_ID=$OPTARG;;
     a)
       ALL_FILE=$OPTARG;;
+    s)
+      SKIP_HDFS="true";;
    \?)
       usage;exit 1;;
   esac
@@ -82,58 +85,8 @@ ALL_HOSTS=$(cat $ALL_FILE  2>/dev/null | grep -v ^# | tr '\n' ',' | sed 's|,$||g
 
 
 ################
-# Client node
-################
-
-#
-# Install base packages
-#
-if ! rpm -q wget >/dev/null 2>&1; then
-  echo -e "\n####  Installing wget on $(hostname -f)"
-  yum install wget -y || exit 1
-  echo "SUCCESS"
-fi
-
-if ! rpm -qa | grep -q epel; then
-  echo -e "\n####  Installing the EPEL yum repo on $(hostname -f)"
-  rpm -Uvh $EPEL_SOURCE_URL
-  echo "SUCCESS"
-fi
-
-if ! rpm -q pdsh >/dev/null 2>&1; then
-  echo -e "\n####  Installing pdsh on $(hostname -f)"
-  yum install pdsh -y || exit 1
-  echo "SUCCESS"
-fi
-
-
-
-################
 # All nodes
 ################
-#
-# Install wget 
-#
-echo -e "\n####  Installing wget on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "yum install wget -y"
-echo "SUCCESS"
-
-
-#
-# Install epel repo
-#
-echo -e "\n####  Installing the EPEL yum repo on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "rpm -Uvh $EPEL_SOURCE_URL"
-echo "SUCCESS"
-
-
-#
-# Install pdsh (for pdcp)
-#
-echo -e "\n####  Installing pdsh on $ALL_HOSTS"
-pdsh $PDSH_ARGS -w $ALL_HOSTS "rpm -q pdsh >/dev/null || yum install pdsh -y"
-echo "SUCCESS"
-
 #
 # Create the user
 #
@@ -142,34 +95,40 @@ pdsh $PDSH_ARGS -w $ALL_HOSTS "adduser $USER_ID"
 pdsh $PDSH_ARGS -w $ALL_HOSTS "id $USER_ID"
 echo "SUCCESS"
 
+#
+# HDFS Setup
+#
 
-#
-# Create the HDFS user directory
-#
-echo -e "\n##### Creating the HDFS user directory for $USER_ID"
-su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID"
-su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID"
-su - hdfs -c "hdfs dfs -ls /user | grep $USER_ID"
-echo "SUCCESS"
+if [ -z "$SKIP_HDFS" ]; then
 
-#
-# Set the quota on the HDFS user directory
-#
-echo -e "\n##### Setting HDFS usage quota for /user/$USER_ID to ${QUOTA_GB}GB"
-su - hdfs -c "hdfs dfsadmin -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
-su - hdfs -c "hdfs dfs -count -q /user/$USER_ID" | awk '{print $NF,$3}'
-echo "SUCCESS"
+  #
+  # Create the HDFS user directory
+  #
+  echo -e "\n##### Creating the HDFS user directory for $USER_ID"
+  su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID"
+  su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID"
+  su - hdfs -c "hdfs dfs -ls /user | grep $USER_ID"
+  echo "SUCCESS"
 
-#
-# Workaround: Create the user specific hive directory for the hive view
-#
-echo -e "\n##### Creating /user/$USER_ID/hive for the hive view"
-su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID/hive"
-su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID/hive"
-su - hdfs -c "hdfs dfs -chmod 777 /user/$USER_ID/hive"
-su - hdfs -c "hdfs dfs -ls /user/$USER_ID | grep hive"
-echo "SUCCESS"
+  #
+  # Set the quota on the HDFS user directory
+  #
+  echo -e "\n##### Setting HDFS usage quota for /user/$USER_ID to ${QUOTA_GB}GB"
+  su - hdfs -c "hdfs dfsadmin -setSpaceQuota $QUOTA_BYTES /user/$USER_ID"
+  su - hdfs -c "hdfs dfs -count -q /user/$USER_ID" | awk '{print $NF,$3}'
+  echo "SUCCESS"
 
+  #
+  # Workaround: Create the user specific hive directory for the hive view
+  #
+  echo -e "\n##### Creating /user/$USER_ID/hive for the hive view"
+  su - hdfs -c "hdfs dfs -mkdir /user/$USER_ID/hive"
+  su - hdfs -c "hdfs dfs -chown $USER_ID:$USER_ID /user/$USER_ID/hive"
+  su - hdfs -c "hdfs dfs -chmod 777 /user/$USER_ID/hive"
+  su - hdfs -c "hdfs dfs -ls /user/$USER_ID | grep hive"
+  echo "SUCCESS"
+
+fi
 
 echo -e "\n##"
 echo -e "## Finished $SCRIPT_NAME on $ALL_HOSTS"
