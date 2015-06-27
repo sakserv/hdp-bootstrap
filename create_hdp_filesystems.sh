@@ -43,7 +43,7 @@ SERVER_TYPE=$(echo $SERVER_TYPE | tr [A-Z] [a-z])
 #
 # Get the list of block devices
 #
-drives=$(lsblk | grep ^sd | grep -v sd[ab] | awk '{print $1}')
+drives=$(lsblk | grep ^sd | grep -v sd[ab] | awk '{print $1}' | sort)
 
 #
 # Worker
