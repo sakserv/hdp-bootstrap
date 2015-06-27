@@ -58,7 +58,7 @@ done
 
 for server in $SVR_COPY_LIST; do
   echo -e "\n#### Copying backup to $server"
-  ssh $SSH_ARGS $server "mkdir $LOG_DIR"
+  ssh $SSH_ARGS $server "mkdir -p $LOG_DIR"
   scp $SSH_ARGS $LOG_DIR/ambari-db-*-backup.${DT} $server:$LOG_DIR/
   echo "SUCCESS"
 done
