@@ -11,11 +11,11 @@ SCRIPT_DIR=$(cd `dirname $0` && pwd)
 # Variables
 #
 SSH_PRIVATE_KEY_PATH=/root/.ssh/id_hdp
-export PDSH_SSH_ARGS_APPEND="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
+export PDSH_SSH_ARGS_APPEND="-q -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 PDSH_ARGS="-R ssh"
 ETC_HOSTS=/etc/hosts
 ETC_HOSTS_TMP=/tmp/hosts.tmp
-SSH_ARGS="-i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
+SSH_ARGS="-q -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 
 
 #
