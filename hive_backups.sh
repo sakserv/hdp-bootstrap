@@ -50,7 +50,7 @@ fi
 
 # Run the backup
 for db in $DB_LIST; do 
-  echo -e "\n#### Running the Hive database backup for DB: $db"
+  echo -e "\n#### Running the Hive database backup on $DT for DB: $db"
   OUTFILE=$LOG_DIR/hive-db-${db}-backup.${DT}
   mysqldump $db >$OUTFILE
   echo "SUCCESS"

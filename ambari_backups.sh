@@ -50,7 +50,7 @@ fi
 
 # Run the backup
 for db in $DB_LIST; do 
-  echo -e "\n#### Running the Ambari database backup for DB: $db"
+  echo -e "\n#### Running the Ambari database backup on $DT for DB: $db"
   OUTFILE=$LOG_DIR/ambari-db-${db}-backup.${DT}
   su - postgres -c "pg_dump $db >$OUTFILE"
   echo "SUCCESS"
