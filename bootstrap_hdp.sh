@@ -15,7 +15,6 @@ export PDSH_SSH_ARGS_APPEND="-q -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyCheckin
 PDSH_ARGS="-R ssh"
 SSH_ARGS="-q -i $SSH_PRIVATE_KEY_PATH -o StrictHostKeyChecking=no"
 EPEL_SOURCE_URL="http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm"
-AMBARI_REPO_URL="http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo"
 
 
 #
@@ -226,7 +225,7 @@ echo "SUCCESS"
 #
 echo -e "\n#### Configuring the Ambari YUM Repo"
 pdsh $PDSH_ARGS -w $ALL_HOSTS <<'ENDSSH'
-wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.0.0/ambari.repo -O /etc/yum.repos.d/ambari.repo
+wget -N http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.1.1/ambari.repo -O /etc/yum.repos.d/ambari.repo
 cat /etc/yum.repos.d/ambari.repo
 ENDSSH
 echo "SUCCESS"
